@@ -39,6 +39,7 @@ h1 { font-family: var(--display); font-weight: 900; font-stretch: 78%; font-size
 .hleg button i { width: 10px; height: 3px; border-radius: 2px; }
 .hleg button small { font-family: var(--mono); font-size: 11px; font-weight: 600; }
 .hleg button[aria-pressed="false"] { opacity: .4; }
+.hch { margin-bottom: 6px; }
 .hsvg svg { display: block; width: 100%; height: auto; touch-action: pan-y; }
 .hsvg text { font-family: var(--mono); font-size: 10.5px; fill: var(--onnavy2); }
 .htip { position: absolute; z-index: 5; pointer-events: none; background: #fff; color: var(--ink); border-radius: 8px; padding: 8px 10px; font-size: 12.5px; box-shadow: 0 10px 30px rgba(0,0,0,.35); min-width: 170px; }
@@ -96,7 +97,6 @@ footer { margin: 44px 0 40px; padding-top: 16px; border-top: 1px solid var(--lin
     <div class="hchart" id="hchart">
       <div class="hch"><div><b>The month's big movers against the market</b><span id="hcAsof">Prices as of Nov 20, 2026</span></div>
         <div class="rng" role="group" aria-label="Time range"><button type="button" data-r="1" aria-pressed="true">1M</button><button type="button" data-r="3" aria-pressed="false">3M</button></div></div>
-      <div class="hleg" id="hcLeg"></div>
       <div class="hsvg" id="hcSvg"></div>
       <div class="htip" id="hcTip" hidden></div>
     </div></div>
@@ -194,6 +194,7 @@ footer { margin: 44px 0 40px; padding-top: 16px; border-top: 1px solid var(--lin
   const SRC = ['https://raw.githubusercontent.com/88clo/market-desk/main/data/prices.json', 'data/prices.json'];
   const META = { VOO: ['S&P 500 fund (VOO)', '#ffffff', 2.8], NVDA: ['Nvidia', '#ff7b6e', 2], SMH: ['Chip stocks (SMH)', '#ffc061', 2], XLP: ['Consumer staples (XLP)', '#73dba0', 2], XBI: ['Biotech (XBI)', '#b8a3ff', 2] };
   const ORDER = ['VOO', 'NVDA', 'SMH', 'XLP', 'XBI'];
+  const SHORT = { VOO: 'S&P 500', NVDA: 'Nvidia', SMH: 'Chips', XLP: 'Staples', XBI: 'Biotech' };
   const NS = 'http://www.w3.org/2000/svg', el = (t, a) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); return e; };
   const $ = id => document.getElementById(id);
   let D = FALLBACK, months = 1; const off = new Set();
@@ -215,8 +216,8 @@ footer { margin: 44px 0 40px; padding-top: 16px; border-top: 1px solid var(--lin
       b.title = (off.has(r.s) ? 'Show ' : 'Hide ') + META[r.s][0]; b.addEventListener('click', () => { off.has(r.s) ? off.delete(r.s) : off.add(r.s); draw(); }); $('hcLeg').appendChild(b); });
   }
   function draw() {
-    const box = $('hcSvg'); const R0 = rows(), dates = window_(), R = R0.filter(r => !off.has(r.s)); legend(R0); box.textContent = '';
-    const W = Math.max(box.clientWidth, 280), H = Math.round(Math.min(300, Math.max(190, W * 0.46))), mL = 40, mR = 54, mT = 10, mB = 22, n = dates.length;
+    const box = $('hcSvg'); const R0 = rows(), dates = window_(), R = R0; box.textContent = '';
+    const W = Math.max(box.clientWidth, 280), narrow = W < 460, H = Math.round(Math.min(310, Math.max(210, W * 0.5))), mL = 40, mR = narrow ? 112 : 198, mT = 10, mB = 22, n = dates.length;
     let lo = 0, hi = 0; R.forEach(r => r.v.forEach(x => { if (x != null) { lo = Math.min(lo, x); hi = Math.max(hi, x); } })); lo -= 3; hi += 3;
     const X = i => mL + i / Math.max(1, n - 1) * (W - mL - mR), Y = v => mT + (hi - v) / (hi - lo) * (H - mT - mB);
     const s = el('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'Percent change since ' + fmtD(dates[0]) + ' for VOO, Nvidia, chip stocks, consumer staples and biotech' });
@@ -225,8 +226,8 @@ footer { margin: 44px 0 40px; padding-top: 16px; border-top: 1px solid var(--lin
     const nt = W < 420 ? 3 : 5; for (let k = 0; k < nt; k++) { const i = Math.round(k / (nt - 1) * (n - 1)); const l = el('text', { x: X(i), y: H - 6, 'text-anchor': k === 0 ? 'start' : k === nt - 1 ? 'end' : 'middle' }); l.textContent = fmtD(dates[i]); s.appendChild(l); }
     R.slice().reverse().forEach(r => { let d = '', on = false; r.v.forEach((v, i) => { if (v == null) { on = false; return; } d += (on ? 'L' : 'M') + X(i).toFixed(1) + ',' + Y(v).toFixed(1); on = true; }); s.appendChild(el('path', { d, fill: 'none', stroke: META[r.s][1], 'stroke-width': META[r.s][2], 'stroke-linejoin': 'round', 'stroke-linecap': 'round' })); });
     const labs = R.map(r => { const i = r.v.length - 1; return { r, y: Y(r.v[i]), v: r.v[i] }; }).sort((a, b) => a.y - b.y);
-    for (let k = 1; k < labs.length; k++) if (labs[k].y - labs[k - 1].y < 12) labs[k].y = labs[k - 1].y + 12;
-    labs.forEach(l => { s.appendChild(el('circle', { cx: X(n - 1), cy: Y(l.v), r: 3, fill: META[l.r.s][1] })); const t = el('text', { x: X(n - 1) + 6, y: l.y + 3.5, style: 'fill:' + META[l.r.s][1] + ';font-weight:600' }); t.textContent = l.r.s; s.appendChild(t); });
+    for (let k = 1; k < labs.length; k++) if (labs[k].y - labs[k - 1].y < 14) labs[k].y = labs[k - 1].y + 14;
+    labs.forEach(l => { s.appendChild(el('circle', { cx: X(n - 1), cy: Y(l.v), r: 3, fill: META[l.r.s][1] })); const t = el('text', { x: X(n - 1) + 7, y: l.y + 3.5, style: 'fill:' + META[l.r.s][1] + ';font-family:var(--body);font-size:11.5px' }); const a = el('tspan', { style: 'font-weight:700;font-family:var(--mono)' }); a.textContent = pc(l.v) + ' '; t.appendChild(a); t.appendChild(document.createTextNode(narrow ? SHORT[l.r.s] : META[l.r.s][0])); s.appendChild(t); });
     const cross = el('line', { y1: mT, y2: H - mB, stroke: 'rgba(255,255,255,.5)', 'stroke-dasharray': '3 3', visibility: 'hidden' }); s.appendChild(cross);
     const dots = el('g', {}); s.appendChild(dots);
     const hit = el('rect', { x: mL, y: mT, width: W - mL - mR, height: H - mT - mB, fill: 'transparent' }); s.appendChild(hit);
