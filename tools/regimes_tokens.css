@@ -1,0 +1,8 @@
+:root{--font-anthropic-sans:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;--font-anthropic-serif:Georgia,"Times New Roman",serif;
+--color-bg:#f7f7f5;--color-panel:#ffffff;--color-fg:#16181d;--color-fg-muted:#636a75;--color-border-line:#e1e3e6;--color-ok:#1f8a4c;--color-warn:#c48a00;--color-bad:#cc3d33;
+--cds-border:#e1e3e6;--cds-chart-grid:#eceef0;--cds-chart-muted:#9aa1ab;--cds-text-secondary:#5d6470;--cds-surface-popover:#ffffff;--cds-shadow-popover:0 8px 24px rgba(15,20,30,.14);
+--cds-radius:10px;--cds-gap-xs:4px;--cds-gap-sm:8px;--cds-gap-md:12px;--cds-gap-lg:20px;--cds-pad-sm:8px;--cds-pad-md:14px;--cds-pad-lg:20px;
+--cds-font-size-caption:12px;--cds-font-size-body:14px;--cds-font-size-heading:17px;--cds-font-size-title:26px;--cds-font-weight-medium:600;color-scheme:light}
+body{background:var(--color-bg);color:var(--color-fg);font-family:var(--font-anthropic-sans);font-size:14px;line-height:1.5}
+#dash-root{max-width:1180px;margin:0 auto;padding:20px max(16px,env(safe-area-inset-right,0px)) 48px max(16px,env(safe-area-inset-left,0px))}
+.dash-skeleton{min-height:40px}
