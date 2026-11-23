@@ -24,6 +24,14 @@ body { background: var(--page); color: var(--ink); font-family: var(--body); fon
 h1 { font-family: var(--display); font-weight: 900; font-stretch: 78%; font-size: clamp(54px, 9vw, 104px); line-height: .9; letter-spacing: -0.01em; margin: 10px 0 14px; }
 .lede { margin: 0; max-width: 54ch; font-size: 17px; color: var(--onnavy2); position: relative; }
 .lede b { color: var(--onnavy); font-weight: 600; }
+.util { display: flex; justify-content: flex-end; align-items: center; gap: 8px 18px; flex-wrap: wrap; margin: -24px 0 18px; position: relative; z-index: 1; }
+.util a { text-decoration: none; }
+.util .ext { font-size: 12.5px; color: var(--onnavy2); }
+.util .ext:hover { color: var(--onnavy); text-decoration: underline; }
+.util .chatbtn { font-size: 13.5px; font-weight: 600; color: var(--navy); background: var(--onnavy); border-radius: 999px; padding: 6px 14px; }
+.util .chatbtn:hover { background: #fff; }
+.util a:focus-visible { outline: 2px solid #7fb0f2; outline-offset: 2px; }
+@media (max-width: 640px) { .util { justify-content: flex-start; margin-top: -20px; } }
 .htop { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.25fr); gap: 28px; align-items: start; }
 .hl { min-width: 0; }
 .hchart { position: relative; min-width: 0; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.12); border-radius: 12px; padding: 12px 12px 6px; margin-top: 8px; }
@@ -90,6 +98,7 @@ footer { margin: 44px 0 40px; padding-top: 16px; border-top: 1px solid var(--lin
 
 <header class="hero">
   <div class="in">
+    <div class="util"><a class="ext" href="https://claude.ai/artifact/RES9qxbEVNfhyAbiMiPZcv" target="_blank" rel="noopener">Also: Two Centuries of Regimes, Industry &amp; Opportunity ↗</a><a class="chatbtn" href="https://claude.ai/code/session_01BrvMcoPQpxWG33kTPzFZ31" target="_blank" rel="noopener" title="Only you can open this chat">Open the Market Desk chat ↗</a></div>
     <div class="htop"><div class="hl">
     <div class="kick">Personal investing · three dashboards</div>
     <h1>Market Desk</h1>
